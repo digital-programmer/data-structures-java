@@ -1,0 +1,10 @@
+package concepts;
+
+import java.util.ArrayList;
+
+public class TreeNode<T> {
+	int data;
+	ArrayList<TreeNode<T>> children;
+	
+	
+}

@@ -1,0 +1,253 @@
+package concepts;
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+
+
+public class TreeTest {
+
+	public static void main(String[] args) {
+		TreeNode<Integer> root = takeInput();															
+		printLevelWise(root);
+	}
+	
+	
+	public static TreeNode<Integer> takeInput() {
+		Scanner sc = new Scanner(System.in);
+		Queue<TreeNode<Integer>> pendingNodes = new LinkedList<>();
+		
+		System.out.println("Enter root data: ");
+		int rootData = sc.nextInt();
+		if (rootData == -1) {
+			sc.close();
+			return null;
+		}
+		
+		TreeNode<Integer> root = new TreeNode<>(rootData);
+		pendingNodes.add(root);
+		
+		
+
+		while (!pendingNodes.isEmpty()) {
+			TreeNode<Integer> front = pendingNodes.poll();
+			System.out.println("Enter no. of children for "+ front.data+" : ");
+			int numChild = sc.nextInt();
+			
+			for (int i=0; i < numChild; i++) {
+				System.out.println("For "+ front.data + ",  Enter child " + (i+1) +" : ");
+				int childData = sc.nextInt();
+				TreeNode<Integer> child = new TreeNode<Integer>(childData);
+				front.children.add(child);
+				pendingNodes.add(child);
+			}
+			
+		}
+		
+		sc.close();
+		return root;
+	}
+	
+	public static boolean checkIfContainsX(TreeNode<Integer> root, int x){
+
+		// Write your code here
+        if(root.data == x) {
+            return true;
+        }
+        boolean b = false;
+        for(int i=0;i<root.children.size();i++) {
+            b = b || checkIfContainsX(root.children.get(i),x);
+        }
+        
+        return b;
+        
+
+	}
+	
+	public static void printLevelWise(TreeNode<Integer> root){
+		
+		System.out.println("Level Order :");
+		
+        Queue<TreeNode<Integer>> pendingNodes = new LinkedList<>();
+        pendingNodes.add(root);
+        pendingNodes.add(null);
+        if(root==null) {
+            return;
+        }
+        
+            
+        while(!pendingNodes.isEmpty()) {
+            TreeNode<Integer> curr = pendingNodes.poll();
+            
+            if(curr==null) {
+                if(!pendingNodes.isEmpty()) {
+                    pendingNodes.add(null);
+                    System.out.println();
+                }
+            }
+            else {
+                for(int i=0;i<curr.children.size();i++) {
+                    pendingNodes.add(curr.children.get(i));
+                }
+            	System.out.print(curr.data+" ");
+            }      
+        }
+
+	}
+	
+	public static int numNodeGreater(TreeNode<Integer> root,int x){
+
+        if (root==null) {
+            return 0;
+        }
+        
+        
+        int count = 0;
+        if (root.data > x) {
+            count++;
+        }
+        
+        for (int i=0;i<root.children.size();i++) {
+            int smallCount = numNodeGreater(root.children.get(i),x);
+            count += smallCount;
+        }
+        
+        return count;   
+	}
+	
+	public static int getHeight(TreeNode<Integer> root){
+        
+        if (root==null) {
+            return 0;
+        }
+        
+        int height = 0;
+        
+        for (int i=0;i<root.children.size();i++) {
+            int smallHeight  = getHeight(root.children.get(i));
+            height = Math.max(height,smallHeight);
+        }
+                
+        return 1 + height;
+
+	}
+	
+	public static int countLeafNodes(TreeNode<Integer> root){
+
+		// Write your code here
+        if(root==null) {
+            return 0;
+        }
+        
+        if(root.children.size() == 0) {
+            return 1;
+        }
+        
+        int leafNodes = 0;
+        for (int i=0;i<root.children.size();i++) {
+            int tinyLeaves = countLeafNodes(root.children.get(i));
+            leafNodes += tinyLeaves;
+        }
+        
+        return leafNodes;     
+
+	}
+	
+	public static void printPostOrder(TreeNode<Integer> root){
+        if(root==null) {
+            return;
+        }
+        
+        for(int i=0;i<root.children.size();i++) {
+            printPostOrder(root.children.get(i));
+        }
+        
+        System.out.print(root.data+" ");
+        
+	}
+	
+	public static void printTreePreOrder(TreeNode<Integer> root) {
+		if(root==null) {
+			return;
+		}
+		
+		System.out.print(root.data+" : ");
+		
+		for(int i=0;i<root.children.size();i++) {
+			System.out.print(root.children.get(i).data+ " ");
+		}		
+		System.out.println();
+		
+		for(int i=0;i<root.children.size();i++) {
+			printTreePreOrder(root.children.get(i));
+		}
+		
+	}
+	
+	public static int noOfNodes(TreeNode<Integer> root) {
+		if (root==null) {
+			return 0;
+		}
+		int count = 1;
+		for(int i=0;i<root.children.size();i++) {
+			int childCount = noOfNodes(root.children.get(i));
+			count += childCount;
+		}
+		
+		return count;
+	}
+	
+	
+	// ----------------------------------------------------------------------------//
+	// Node having sum of children and node is max
+	// ----------------------------------------------------------------------------//
+    static class Pair{
+        TreeNode<Integer> maxNode;
+        int maxSum;
+        
+        public Pair(TreeNode<Integer> element, int sum) {
+            this.maxNode = element;
+            this.maxSum = sum;
+        }
+    }
+    
+    public static Pair maxSumNodeHelper(TreeNode<Integer> root) {
+        if(root==null) {
+            Pair ans = new Pair(null,Integer.MIN_VALUE);
+            return ans;
+        }
+        
+        int sum = root.data;
+        for(int i=0;i<root.children.size();i++) {
+            sum += root.children.get(i).data;
+        }
+        
+        Pair max = new Pair(root,sum);
+        
+        
+        for(int i=0;i<root.children.size();i++) {
+            Pair ans = maxSumNodeHelper(root.children.get(i));
+            if (ans.maxSum > max.maxSum) {
+                max.maxSum = ans.maxSum;
+                max.maxNode = ans.maxNode;
+            }
+        }
+        
+        return max;   
+        
+    }
+	
+	
+	public static TreeNode<Integer> maxSumNode(TreeNode<Integer> root){
+        
+        Pair ans = maxSumNodeHelper(root);
+        return ans.maxNode;
+        
+	}	
+	
+	// ============================================================================ //
+	
+	
+	
+}

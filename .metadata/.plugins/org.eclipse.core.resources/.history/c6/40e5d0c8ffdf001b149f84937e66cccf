@@ -1,0 +1,115 @@
+package concepts;
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+
+
+public class TreeTest {
+
+	public static void main(String[] args) {
+		TreeNode<Integer> root = takeInput();
+																	
+		printTreePreOrder(root);						
+					
+		
+	}
+	
+	
+	public static TreeNode<Integer> takeInput() {
+		Scanner sc = new Scanner(System.in);
+		Queue<TreeNode<Integer>> pendingNodes = new LinkedList<>();
+		
+		System.out.println("Enter root data: ");
+		int rootData = sc.nextInt();
+		if (rootData == -1) {
+			sc.close();
+			return null;
+		}
+		
+		TreeNode<Integer> root = new TreeNode<>(rootData);
+		pendingNodes.add(root);
+		
+		
+
+		while (!pendingNodes.isEmpty()) {
+			TreeNode<Integer> front = pendingNodes.poll();
+			System.out.println("Enter no. of children for "+ front.data+" : ");
+			int numChild = sc.nextInt();
+			
+			for (int i=0; i < numChild; i++) {
+				System.out.println("For "+ front.data + ",  Enter child " + (i+1) +" : ");
+				int childData = sc.nextInt();
+				TreeNode<Integer> child = new TreeNode<Integer>(childData);
+				front.children.add(child);
+				pendingNodes.add(child);
+			}
+			
+		}
+		
+		sc.close();
+		return root;
+	}
+	
+	public static void printLevelWise(TreeNode<Integer> root){
+  
+        Queue<TreeNode<Integer>> pendingNodes = new LinkedList<>();
+        pendingNodes.add(root);
+        pendingNodes.add(null);
+        if(root==null) {
+            return;
+        }
+        
+            
+        while(!pendingNodes.isEmpty()) {
+            TreeNode<Integer> curr = pendingNodes.poll();
+            
+            if(curr==null) {
+                if(!pendingNodes.isEmpty()) {
+                    pendingNodes.add(null);
+                    System.out.println();
+                }
+            }
+            else {
+                for(int i=0;i<curr.children.size();i++) {
+                    pendingNodes.add(curr.children.get(i));
+                }
+            	System.out.print(curr.data+" ");
+            }      
+        }
+
+	}
+	
+	
+	public static void printTreePreOrder(TreeNode<Integer> root) {
+		if(root==null) {
+			return;
+		}
+		
+		System.out.print(root.data+" : ");
+		
+		for(int i=0;i<root.children.size();i++) {
+			System.out.print(root.children.get(i).data+ " ");
+		}		
+		System.out.println();
+		
+		for(int i=0;i<root.children.size();i++) {
+			printTreePreOrder(root.children.get(i));
+		}
+		
+	}
+	
+	public static int noOfNodes(TreeNode<Integer> root) {
+		if (root==null) {
+			return 0;
+		}
+		int count = 1;
+		for(int i=0;i<root.children.size();i++) {
+			int childCount = noOfNodes(root.children.get(i));
+			count += childCount;
+		}
+		
+		return count;
+	}
+}
